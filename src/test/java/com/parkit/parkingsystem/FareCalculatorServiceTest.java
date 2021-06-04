@@ -73,7 +73,7 @@ public class FareCalculatorServiceTest {
     @Test
     public void calculateFareBikeWithFutureInTime(){
         LocalDateTime inTime = new LocalDateTime();
-        inTime.now().plusHours(1);
+        inTime=inTime.plusHours(1);
         LocalDateTime outTime = new LocalDateTime();
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
 
