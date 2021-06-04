@@ -32,7 +32,7 @@ public class FareCalculatorServiceTest {
     @Test
     public void calculateFareCar(){
         LocalDateTime inTime = new LocalDateTime();
-        inTime.now();
+        inTime=inTime.minusHours(1);
         LocalDateTime outTime = new LocalDateTime();
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
 
@@ -46,7 +46,7 @@ public class FareCalculatorServiceTest {
     @Test
     public void calculateFareBike(){
         LocalDateTime inTime = new LocalDateTime();
-        inTime.now();
+        inTime=inTime.minusHours(1);
         LocalDateTime outTime = new LocalDateTime();
         ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
 
