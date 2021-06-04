@@ -58,7 +58,7 @@ public class FareCalculatorServiceTest {
     }
 
     @Test
-    public void calculateFareUnkownType(){
+    public void calculateFareUnknownType(){
         LocalDateTime inTime = new LocalDateTime();
         inTime.now();
         LocalDateTime outTime = new LocalDateTime();
