@@ -3,20 +3,24 @@ package com.parkit.parkingsystem.service;
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.model.Ticket;
 
-import java.time.Duration;
-
 public class FareCalculatorService {
 
     public void calculateFare(Ticket ticket){
-        if( (ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime())) ){
+       if( (ticket.getOutTime() == null) || (ticket.getOutTime().isBefore(ticket.getInTime())) ){
             throw new IllegalArgumentException("Out time provided is incorrect:"+ticket.getOutTime().toString());
+        }
+
+        int inDayTime = ticket.getInTime().getDayOfMonth();
+        int outDayTime = ticket.getOutTime().getDayOfMonth();
+        int totalDays=0;
+
+        if(inDayTime<outDayTime){
+            totalDays= outDayTime-inDayTime;
         }
 
         long inTime = ticket.getInTime().getMillisOfDay();
         long outTime = ticket.getOutTime().getMillisOfDay();
-
-        //TODO: Some tests are failing here. Need to check if this logic is correct
-        double duration = ((outTime - inTime)/60000)/60.;
+        double duration = (((outTime - inTime)/60000)/60.)+totalDays*24;
 
         switch (ticket.getParkingSpot().getParkingType()){
             case CAR: {
