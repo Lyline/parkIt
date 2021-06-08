@@ -126,4 +126,17 @@ public class FareCalculatorServiceTest {
         assertEquals( (24 * Fare.CAR_RATE_PER_HOUR) , ticket.getPrice());
     }
 
+    @Test
+    public void calculateFareCarWithParkBetweenTwoDates(){
+        LocalDateTime inTime = new LocalDateTime(2020,6,5,5,30);
+        LocalDateTime outTIme = new LocalDateTime(2020,6,7,2,0);
+        ParkingSpot parkingSpot = new ParkingSpot(1,ParkingType.CAR,false);
+
+        ticket.setInTime(inTime);
+        ticket.setOutTime(outTIme);
+        ticket.setParkingSpot(parkingSpot);
+        fareCalculatorService.calculateFare(ticket);
+        assertEquals((44.50*Fare.CAR_RATE_PER_HOUR),ticket.getPrice());
+    }
+
 }
