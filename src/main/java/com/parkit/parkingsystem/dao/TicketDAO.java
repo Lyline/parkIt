@@ -9,7 +9,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDateTime;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 public class TicketDAO {
 
@@ -55,7 +58,7 @@ public class TicketDAO {
                 ticket.setVehicleRegNumber(vehicleRegNumber);
                 ticket.setPrice(rs.getDouble(3));
                 ticket.setInTime(LocalDateTime.fromDateFields(rs.getTimestamp(4)));
-                ticket.setOutTime(LocalDateTime.fromDateFields(rs.getTimestamp(5)));
+                ticket.setOutTime(LocalDateTime.now());
             }
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
@@ -73,8 +76,8 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.UPDATE_TICKET);
             ps.setDouble(1, ticket.getPrice());
-            ps.setTimestamp(2, new Timestamp((ticket.getInTime().toDateTime().getMillis())));
-            ps.setInt(3,ticket.getId());
+            ps.setTimestamp(2, new Timestamp((ticket.getOutTime().toDateTime().getMillis())));
+            ps.setInt(3, ticket.getId());
             ps.execute();
             return true;
         }catch (Exception ex){
@@ -84,4 +87,5 @@ public class TicketDAO {
         }
         return false;
     }
+
 }
