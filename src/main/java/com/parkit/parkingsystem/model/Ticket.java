@@ -10,6 +10,7 @@ public class Ticket {
     private double price;
     private LocalDateTime inTime;
     private LocalDateTime outTime;
+    private boolean vehicleSubscribe;
 
     public int getId() {
         return id;
@@ -57,5 +58,13 @@ public class Ticket {
 
     public void setOutTime(LocalDateTime outTime) {
         this.outTime = outTime;
+    }
+
+    public boolean isVehicleSubscribe() {
+        return vehicleSubscribe;
+    }
+
+    public void setVehicleSubscribe(boolean vehicleSubscribe) {
+        this.vehicleSubscribe = vehicleSubscribe;
     }
 }
