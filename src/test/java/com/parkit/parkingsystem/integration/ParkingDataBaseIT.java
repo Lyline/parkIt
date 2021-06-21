@@ -138,4 +138,151 @@ public class ParkingDataBaseIT {
     assertEquals(1.5, priceResponse);
     assertEquals(LocalDateTime.now().toString(fmt), outTimeResponse);
   }
+
+  @Test
+  public void testVehicleSubscribe() {
+    //GIVEN
+    dataBasePrepareService.clearDataBaseEntries();
+    Connection con = null;
+    String vehicleRequest = "ABCDEF";
+    try {
+      con = dataBaseTestConfig.getConnection();
+
+      Statement psTicket = con.createStatement();
+      psTicket.executeUpdate
+          ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
+              "value (1,1,'ABCDEF',0.0,DATE_SUB(CURRENT_TIME ,INTERVAL 4 HOUR),DATE_SUB(CURRENT_TIME ,INTERVAL 3 HOUR))");
+    } catch (SQLException | ClassNotFoundException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    //WHEN
+    boolean response = ticketDAO.searchVehicleSubscribe(vehicleRequest);
+
+    //THEN
+    assertEquals(true, response);
+  }
+
+  @Test
+  public void testCarParkingFareDiscounted() throws Exception {
+    //GIVEN
+    dataBasePrepareService.clearDataBaseEntries();
+    Connection con = null;
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+
+      Statement psTicket = con.createStatement();
+      psTicket.executeUpdate
+          ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
+              "value (1,1,'ABCDEF',1.5,DATE_SUB(CURRENT_TIME ,INTERVAL 8 HOUR),DATE_SUB(CURRENT_TIME ,INTERVAL 7 HOUR))");
+    } catch (SQLException | ClassNotFoundException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+
+      Statement psTicket = con.createStatement();
+      psTicket.executeUpdate
+          ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
+              "value (2,1,'ABCDEF',0,DATE_SUB(CURRENT_TIME ,INTERVAL 2 HOUR),null)");
+    } catch (SQLException | ClassNotFoundException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    //WHEN
+    when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+
+    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+    parkingService.processExitingVehicle();
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+      PreparedStatement ps = con.prepareStatement
+          ("select VEHICLE_REG_NUMBER, PRICE FROM ticket");
+      ResultSet rs = ps.executeQuery();
+
+      while (rs.next()) {
+        vehicleNumberResponse = rs.getString("VEHICLE_REG_NUMBER");
+        priceResponse = rs.getDouble("PRICE");
+
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    //THEN
+    assertEquals("ABCDEF", vehicleNumberResponse);
+    assertEquals(2.85, priceResponse);
+  }
+
+  @Test
+  public void testBikeParkingFareDiscounted() throws Exception {
+    //GIVEN
+    dataBasePrepareService.clearDataBaseEntries();
+    Connection con = null;
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+
+      Statement psTicket = con.createStatement();
+      psTicket.executeUpdate
+          ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
+              "value (1,4,'MyBike',1,DATE_SUB(CURRENT_TIME ,INTERVAL 8 HOUR),DATE_SUB(CURRENT_TIME ,INTERVAL 7 HOUR))");
+    } catch (SQLException | ClassNotFoundException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+
+      Statement psTicket = con.createStatement();
+      psTicket.executeUpdate
+          ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
+              "value (2,4,'MyBike',0,DATE_SUB(CURRENT_TIME ,INTERVAL 2 HOUR),null)");
+    } catch (SQLException | ClassNotFoundException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    //WHEN
+    when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("MyBike");
+
+    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+    parkingService.processExitingVehicle();
+
+    try {
+      con = dataBaseTestConfig.getConnection();
+      PreparedStatement ps = con.prepareStatement
+          ("select VEHICLE_REG_NUMBER, PRICE FROM ticket");
+      ResultSet rs = ps.executeQuery();
+
+      while (rs.next()) {
+        vehicleNumberResponse = rs.getString("VEHICLE_REG_NUMBER");
+        priceResponse = rs.getDouble("PRICE");
+
+      }
+    } catch (SQLException throwables) {
+      throwables.printStackTrace();
+    } finally {
+      dataBaseTestConfig.closeConnection(con);
+    }
+
+    //THEN
+    assertEquals("MyBike", vehicleNumberResponse);
+    assertEquals(1.9, priceResponse);
+  }
+
 }
