@@ -9,10 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDateTime;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 
 public class TicketDAO {
 
@@ -44,12 +41,14 @@ public class TicketDAO {
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
+
         try {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
             ps.setString(1,vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
+
             if(rs.next()){
                 ticket = new Ticket();
                 ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)),false);
@@ -80,12 +79,40 @@ public class TicketDAO {
             ps.setInt(3, ticket.getId());
             ps.execute();
             return true;
-        }catch (Exception ex){
-            logger.error("Error saving ticket info",ex);
-        }finally {
+        } catch (Exception ex) {
+            logger.error("Error saving ticket info", ex);
+        } finally {
             dataBaseConfig.closeConnection(con);
         }
         return false;
     }
 
+    public boolean searchVehicleSubscribe(String vehicleNumber) {
+        Connection con = null;
+        int inComingNumber = 0;
+
+        try {
+            con = dataBaseConfig.getConnection();
+            Statement statement = con.createStatement();
+            ResultSet response = statement.executeQuery("select VEHICLE_REG_NUMBER,OUT_TIME from TICKET");
+
+
+            while (response.next()) {
+                String vehicleResponse = response.getString(1);
+                Date outTimeResponse = response.getDate(2);
+
+                if (vehicleResponse.equals(vehicleNumber) && outTimeResponse != null) {
+                    inComingNumber++;
+                }
+            }
+            if (inComingNumber >= 1) return true;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return false;
+    }
 }
