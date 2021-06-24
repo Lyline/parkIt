@@ -7,6 +7,7 @@ import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.ParkingService;
 import com.parkit.parkingsystem.util.InputReaderUtil;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,14 +16,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Date;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class ParkingServiceTest {
 
     private static ParkingService parkingService;
+    private static Logger logger;
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
@@ -36,8 +38,8 @@ public class ParkingServiceTest {
         try {
             when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
-            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR,false);
-            Ticket ticket = new Ticket();
+            ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
+
             ticket.setInTime(LocalDateTime.now().minusHours(1));
             ticket.setParkingSpot(parkingSpot);
             ticket.setVehicleRegNumber("ABCDEF");
@@ -51,12 +53,21 @@ public class ParkingServiceTest {
             e.printStackTrace();
             throw  new RuntimeException("Failed to set up test mock objects");
         }
+
+        parkingService.processExitingVehicle();
+
+        verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
+        assertEquals(1.5, ticket.getPrice());
     }
 
     @Test
-    public void processExitingVehicleTest(){
-        parkingService.processExitingVehicle();
-        verify(parkingSpotDAO, Mockito.times(1)).updateParking(any(ParkingSpot.class));
-    }
+    public void processInvalidExitingVehicleTest() {
+        // no vehicle number typed
+        ticketDAO.getTicket(null);
 
+        ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+        parkingService.processExitingVehicle();
+
+        assertThrows(Exception.class, () -> logger.error("Unable to process exiting vehicle"));
+    }
 }

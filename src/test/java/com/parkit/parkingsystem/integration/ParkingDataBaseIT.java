@@ -54,7 +54,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingACar() throws Exception {
+  public void testParkingACarIT() throws Exception {
     when(inputReaderUtil.readSelection()).thenReturn(1);
     when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
     dataBasePrepareService.clearDataBaseEntries();
@@ -89,7 +89,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingLotExit() throws Exception {
+  public void testParkingLotExitIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
 
@@ -140,7 +140,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testVehicleSubscribe() {
+  public void testVehicleSubscribeIT() {
     //GIVEN
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
@@ -166,7 +166,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testCarParkingFareDiscounted() throws Exception {
+  public void testCarParkingFareDiscountedIT() throws Exception {
     //GIVEN
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
@@ -226,7 +226,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testBikeParkingFareDiscounted() throws Exception {
+  public void testBikeParkingFareDiscountedIT() throws Exception {
     //GIVEN
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
