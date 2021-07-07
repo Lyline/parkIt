@@ -11,7 +11,6 @@ import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.apache.logging.log4j.Logger;
 import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -111,7 +110,6 @@ public class ParkingServiceTest {
     assertThrows(Exception.class, () -> logger.error("Unable to process incoming vehicle"));
   }
 
-  @Disabled
   @Test
   public void processValidExitingVehicleTest() throws Exception {
     ticket = new Ticket();
@@ -120,14 +118,15 @@ public class ParkingServiceTest {
     ticket.setInTime(LocalDateTime.now().minusHours(1));
     ticket.setOutTime(LocalDateTime.now());
 
-    when(inputReaderUtil.readSelection()).thenReturn(1);
-    when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-    when(ticketDAO.updateTicket(ticket)).thenReturn(true);
+    lenient().when(inputReaderUtil.readSelection()).thenReturn(2);
+    lenient().when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
+    lenient().when(ticketDAO.updateTicket(ticket)).thenReturn(true);
+    lenient().when(ticketDAO.getTicket(anyString())).thenReturn(ticket);
 
     parkingService.processExitingVehicle();
 
     verify(parkingSpotDAO, times(1)).updateParking(any(ParkingSpot.class));
-    verify(inputReaderUtil, times(2)).readSelection();
+
     assertEquals(1.5, ticket.getPrice());
   }
 
