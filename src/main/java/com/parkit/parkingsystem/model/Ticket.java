@@ -1,15 +1,16 @@
 package com.parkit.parkingsystem.model;
 
-import java.util.Calendar;
-import java.util.Date;
+
+import org.joda.time.LocalDateTime;
 
 public class Ticket {
     private int id;
     private ParkingSpot parkingSpot;
     private String vehicleRegNumber;
     private double price;
-    private Date inTime;
-    private Date outTime;
+    private LocalDateTime inTime;
+    private LocalDateTime outTime;
+    private boolean vehicleSubscribe;
 
     public int getId() {
         return id;
@@ -43,19 +44,27 @@ public class Ticket {
         this.price = price;
     }
 
-    public Date getInTime() {
+    public LocalDateTime getInTime() {
         return inTime;
     }
 
-    public void setInTime(Date inTime) {
+    public void setInTime(LocalDateTime inTime) {
         this.inTime = inTime;
     }
 
-    public Date getOutTime() {
+    public LocalDateTime getOutTime() {
         return outTime;
     }
 
-    public void setOutTime(Date outTime) {
+    public void setOutTime(LocalDateTime outTime) {
         this.outTime = outTime;
+    }
+
+    public boolean isVehicleSubscribe() {
+        return vehicleSubscribe;
+    }
+
+    public void setVehicleSubscribe(boolean vehicleSubscribe) {
+        this.vehicleSubscribe = vehicleSubscribe;
     }
 }
