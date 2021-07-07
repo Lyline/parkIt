@@ -54,14 +54,15 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingACar() throws Exception {
+  public void testParkingACarIT() throws Exception {
+    dataBasePrepareService.clearDataBaseEntries();
+    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
     when(inputReaderUtil.readSelection()).thenReturn(1);
     when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
-    dataBasePrepareService.clearDataBaseEntries();
 
     Connection con = dataBaseTestConfig.getConnection();
 
-    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
     parkingService.processIncomingVehicle();
 
     try {
@@ -89,7 +90,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingLotExit() throws Exception {
+  public void testParkingLotExitIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
 
@@ -98,7 +99,6 @@ public class ParkingDataBaseIT {
       PreparedStatement psParking = con.prepareStatement
           ("update parking set AVAILABLE = 0 where PARKING_NUMBER=1");
       psParking.executeUpdate();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -140,14 +140,12 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testVehicleSubscribe() {
-    //GIVEN
+  public void testVehicleSubscribeIT() {
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
     String vehicleRequest = "ABCDEF";
     try {
       con = dataBaseTestConfig.getConnection();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -158,22 +156,18 @@ public class ParkingDataBaseIT {
       dataBaseTestConfig.closeConnection(con);
     }
 
-    //WHEN
     boolean response = ticketDAO.searchVehicleSubscribe(vehicleRequest);
 
-    //THEN
     assertEquals(true, response);
   }
 
   @Test
-  public void testCarParkingFareDiscounted() throws Exception {
-    //GIVEN
+  public void testCarParkingFareDiscountedIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
 
     try {
       con = dataBaseTestConfig.getConnection();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -186,7 +180,6 @@ public class ParkingDataBaseIT {
 
     try {
       con = dataBaseTestConfig.getConnection();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -197,10 +190,10 @@ public class ParkingDataBaseIT {
       dataBaseTestConfig.closeConnection(con);
     }
 
-    //WHEN
     when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("ABCDEF");
 
     ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
     parkingService.processExitingVehicle();
 
     try {
@@ -220,20 +213,19 @@ public class ParkingDataBaseIT {
       dataBaseTestConfig.closeConnection(con);
     }
 
-    //THEN
     assertEquals("ABCDEF", vehicleNumberResponse);
     assertEquals(2.85, priceResponse);
   }
 
   @Test
-  public void testBikeParkingFareDiscounted() throws Exception {
-    //GIVEN
+  public void testBikeParkingFareDiscountedIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
+    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
+
     Connection con = null;
 
     try {
       con = dataBaseTestConfig.getConnection();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -246,7 +238,6 @@ public class ParkingDataBaseIT {
 
     try {
       con = dataBaseTestConfig.getConnection();
-
       Statement psTicket = con.createStatement();
       psTicket.executeUpdate
           ("insert into ticket(id,parking_number,vehicle_reg_number,price,in_time,out_time)" +
@@ -257,10 +248,8 @@ public class ParkingDataBaseIT {
       dataBaseTestConfig.closeConnection(con);
     }
 
-    //WHEN
     when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn("MyBike");
 
-    ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
     parkingService.processExitingVehicle();
 
     try {
@@ -272,7 +261,6 @@ public class ParkingDataBaseIT {
       while (rs.next()) {
         vehicleNumberResponse = rs.getString("VEHICLE_REG_NUMBER");
         priceResponse = rs.getDouble("PRICE");
-
       }
     } catch (SQLException throwables) {
       throwables.printStackTrace();
@@ -280,7 +268,6 @@ public class ParkingDataBaseIT {
       dataBaseTestConfig.closeConnection(con);
     }
 
-    //THEN
     assertEquals("MyBike", vehicleNumberResponse);
     assertEquals(1.9, priceResponse);
   }
