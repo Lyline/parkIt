@@ -11,13 +11,26 @@ import org.joda.time.LocalDateTime;
 
 import java.sql.*;
 
+/**
+ This class manages all methods for the Ticket Data object.
+ */
 public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
+    /**
+     A new instance of DataBaseConfig.
+     */
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
 
-    public boolean saveTicket(Ticket ticket){
+    /**
+     Saves a ticket of this vehicle on the database.
+
+     @param ticket The ticket of this vehicle.
+     @return The ticket of this vehicle.
+     @see Ticket
+     */
+    public boolean saveTicket(Ticket ticket) {
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
@@ -31,14 +44,23 @@ public class TicketDAO {
             ps.setTimestamp(5, (ticket.getOutTime() == null) ? null : (new Timestamp(ticket.getOutTime().toDateTime().getMillis())));
             ps.execute();
             return true;
-        }catch (Exception ex){
-            logger.error("Error fetching next available slot",ex);
+        } catch (Exception ex) {
+            logger.error("Error fetching next available slot", ex);
             return false;
-        }finally {
+        } finally {
             dataBaseConfig.closeConnection(con);
         }
     }
 
+    /**
+     Gets ticket of this vehicle.
+
+     @param vehicleRegNumber The vehicle registration number.
+
+     @return The ticket of this vehicle.
+
+     @see Ticket
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -47,12 +69,12 @@ public class TicketDAO {
             con = dataBaseConfig.getConnection();
             PreparedStatement ps = con.prepareStatement(DBConstants.GET_TICKET);
             //ID, PARKING_NUMBER, VEHICLE_REG_NUMBER, PRICE, IN_TIME, OUT_TIME)
-            ps.setString(1,vehicleRegNumber);
+            ps.setString(1, vehicleRegNumber);
             ResultSet rs = ps.executeQuery();
 
             if(rs.next()){
                 ticket = new Ticket();
-                ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)),false);
+                ParkingSpot parkingSpot = new ParkingSpot(rs.getInt(1), ParkingType.valueOf(rs.getString(6)), false);
                 ticket.setParkingSpot(parkingSpot);
                 ticket.setId(rs.getInt(2));
                 ticket.setVehicleRegNumber(vehicleRegNumber);
@@ -62,14 +84,23 @@ public class TicketDAO {
             }
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
-        }catch (Exception ex){
-            logger.error("Error fetching next available slot",ex);
-        }finally {
+        } catch (Exception ex) {
+            logger.error("Error fetching next available slot", ex);
+        } finally {
             dataBaseConfig.closeConnection(con);
             return ticket;
         }
     }
 
+    /**
+     Updates ticket of this vehicle.
+
+     @param ticket the ticket.
+
+     @return True if update is validated.
+
+     @see Ticket
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -88,6 +119,13 @@ public class TicketDAO {
         return false;
     }
 
+    /**
+     Searches vehicle subscribe.
+
+     @param vehicleNumber The vehicle registration number.
+
+     @return True if the vehicle registration number exist on the database.
+     */
     public boolean searchVehicleSubscribe(String vehicleNumber) {
         Connection con = null;
         int inComingNumber = 0;
@@ -112,7 +150,6 @@ public class TicketDAO {
             return false;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            return false;
         } finally {
             dataBaseConfig.closeConnection(con);
         }
