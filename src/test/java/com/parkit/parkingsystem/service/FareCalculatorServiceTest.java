@@ -1,10 +1,9 @@
-package com.parkit.parkingsystem;
+package com.parkit.parkingsystem.service;
 
 import com.parkit.parkingsystem.constants.Fare;
 import com.parkit.parkingsystem.constants.ParkingType;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
-import com.parkit.parkingsystem.service.FareCalculatorService;
 import org.joda.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,16 +126,16 @@ public class FareCalculatorServiceTest {
 
     @Test
     public void calculateFareCarWithParkBetweenTwoDates(){
-        LocalDateTime inTime = new LocalDateTime(2020,6,5,5,30);
-        LocalDateTime outTIme = new LocalDateTime(2020,6,7,2,0);
-        ParkingSpot parkingSpot = new ParkingSpot(1,ParkingType.CAR,false);
+        LocalDateTime inTime = new LocalDateTime(2020, 6, 5, 5, 30);
+        LocalDateTime outTIme = new LocalDateTime(2020, 6, 6, 2, 0);
+        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.CAR, false);
         ticket.setInTime(inTime);
         ticket.setOutTime(outTIme);
         ticket.setParkingSpot(parkingSpot);
 
         fareCalculatorService.calculateFare(ticket);
 
-        assertEquals((44.50*Fare.CAR_RATE_PER_HOUR),ticket.getPrice());
+        assertEquals((20.50 * Fare.CAR_RATE_PER_HOUR), ticket.getPrice());
     }
 
     @Test
