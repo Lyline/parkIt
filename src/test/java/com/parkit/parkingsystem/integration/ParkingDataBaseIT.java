@@ -54,7 +54,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingACarIT() throws Exception {
+  public void testIncomingParkingACarIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
     ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
 
@@ -90,7 +90,7 @@ public class ParkingDataBaseIT {
   }
 
   @Test
-  public void testParkingLotExitIT() throws Exception {
+  public void testExitParkingACarIT() throws Exception {
     dataBasePrepareService.clearDataBaseEntries();
     Connection con = null;
 
