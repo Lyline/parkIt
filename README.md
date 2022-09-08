@@ -18,6 +18,7 @@ Code legacy : [lien](https://github.com/OpenClassrooms-Student-Center/parkingsys
 ### Processus
 
 - Récupération du code existant
+- Suivre un backlog des tâches : [lien](https://www.notion.so/bca5abea64994c73824fcbd8406a3f54?v=e5169060e73a4bd2bcdea722a30d748a)
 - Analyse du code legacy
 - Résolution des bugs
 - Validation des tests unitaires et d'intégration
