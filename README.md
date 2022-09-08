@@ -22,7 +22,7 @@ Code legacy : [lien](https://github.com/OpenClassrooms-Student-Center/parkingsys
 - Résolution des bugs
 - Validation des tests unitaires et d'intégration
 - Implémentation des nouvelles fonctionnalités
-- Validation des tests unitaires et d'intégration
+- Rédaction et validation des tests unitaires et d'intégration
 - Validation de la couverture du code avec JaCoCo et SureFire
 - Génération des rapports
 - Documentationd du code avec JavaDoc
